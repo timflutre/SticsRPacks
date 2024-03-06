@@ -369,7 +369,7 @@ However, this takes more time and disk space, and antiviruses sometimes block th
 
 For this session, the JavaSTICS distribution used is `r javastics_path`. This path is stored in the R object `javastics_path` in the context of this tutorial. 
 
-The exercises of the tutorial will use the USMs defined in the "example" workspace of JavaStics.
+The exercises of the tutorial will use the USMs (units of simulation) defined in the "example" workspace of JavaStics.
 The path of this workspace is stored in the R object `workspace_path` in the context of this tutorial.
 For this session this path is `r workspace_path`.
 
@@ -477,7 +477,7 @@ sim_ns = stics_wrapper(model_options = wrapper_options,
                        param_values = c(codeh2oact=2),
                        var= var_names)$sim_list
 
-# Simulate with water stress only
+# Simulate with neither Nstress nor water stress
 sim_without_stress = stics_wrapper(model_options = wrapper_options,
                                    param_values = c(codeinnact=2, codeh2oact=2),
                                    var = var_names)$sim_list
@@ -487,14 +487,14 @@ sim_without_stress = stics_wrapper(model_options = wrapper_options,
 Now we can use the simulated results to plot the dynamic variables of interest for the different configurations:
 
 ```{r PW1-plot-dyn, echo=TRUE, eval=FALSE, message=FALSE}
-p <- plot(sim_ws_ns=sim_ws_ns, sim_ws=sim_ws, sim_ns=sim_ns, sim_without_stress=sim_without_stress, var = dyn_var_names )
+p <- plot(sim_ws_ns=sim_ws_ns, sim_ws=sim_ws, sim_ns=sim_ns, sim_without_stress=sim_without_stress,
+          var=dyn_var_names)
 print(p)
 ```
 
 Finally, we can plot the stress indicators averaged over vegetative and reproductive phases:
 
 ```{r PW1-plot-stress, echo=TRUE, eval=TRUE, message=FALSE}
-
 # Get the final values
 df <- CroPlotR::bind_rows(
   sim_ws_ns[[usm_name]] %>% summarise(across(.cols = stress_ind_names, last)) %>%
@@ -535,7 +535,8 @@ obs = get_obs(workspace = workspace_path, usm = usm)
 obs_filt = filter_obs(obs, "lai_n", include = TRUE)
 
 # Set-up the simulation environment:
-wrapper_options = stics_wrapper_options(javastics = javastics_path, workspace = workspace_path, parallel = TRUE)
+wrapper_options = stics_wrapper_options(javastics = javastics_path, workspace = workspace_path,
+                                        parallel = TRUE)
 optim_options = list(nb_rep = 3, out_dir = workspace_path)
 
 # Define the parameter to optimize and the boundary values:
@@ -616,7 +617,7 @@ We're going to see in this section how to retrieve information from JavaStics in
 
 ### Get usm names
 
-The function `get_usms_list` from the [SticsRFiles package](https://SticsRPacks.github.io/SticsRFiles/index.html) returns the list of USMs included in a usms.xml file.
+The function `get_usms_list` from the [SticsRFiles package](https://SticsRPacks.github.io/SticsRFiles/index.html) returns the list of USMs (units of simulation) included in a usms.xml file.
 
 Here's its description as given in the R help panel (`? get_usms_list`) and on the [SticsRFiles package website](https://SticsRPacks.github.io/SticsRFiles/reference/get_usms_list.html):
 
